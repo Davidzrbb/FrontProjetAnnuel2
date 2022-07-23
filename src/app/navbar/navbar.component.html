@@ -1,0 +1,50 @@
+<nav class="navbar navbar-expand navbar-light bg-light p-3">
+ <a class="navbar-brand" href="/home">BabyTeacher</a>
+  <div class="collapse navbar-collapse" id="navbarSupportedContent">
+    <ul class="navbar-nav mr-auto">
+      <li class="nav-item active">
+        <a class="nav-link" href="/login" *ngIf="!isConnectedBool">Connexion<span
+          class="sr-only">(current)</span></a>
+      </li>
+      <li class="nav-item active">
+        <a class="nav-link" href="/subscribe"  *ngIf="!isConnectedBool">Inscription<span
+          class="sr-only">(current)</span></a>
+
+      </li>
+      <li class="nav-item active">
+        <a class="nav-link" href="/posts">Postes<span
+          class="sr-only">(current)</span></a>
+      </li>
+
+      <li>
+      </li>
+    </ul>
+  </div>
+  <div class="d-flex flex-row">
+    <div ngbDropdown class="d-inline-block" style="margin-right: 5%" *ngIf="isConnectedBool">
+      <img class="fit-picture float-right border-hover-img"
+           [src]='pictureProfile'
+           alt="Profile picture" id="dropdownBasic1" ngbDropdownToggle
+           width="50">
+      <div ngbDropdownMenu aria-labelledby="dropdownBasic1">
+        <button ngbDropdownItem [routerLink]="['/admin']" *ngIf="roleUser === 'admin'">Administration</button>
+        <button ngbDropdownItem [routerLink]="['/message']"
+                [queryParams]="{inbox:'inbox'}">Messages
+        </button>
+        <button ngbDropdownItem [routerLink]="['/profile']"
+                [queryParams]="{login:loginUser}">Profil
+        </button>
+        <button ngbDropdownItem [routerLink]="['/contrat']" *ngIf="roleUser !== 'admin'" >Contrats
+        </button>
+        <button ngbDropdownItem (click)="isDeconnected()">Deconnexion</button>
+      </div>
+    </div>
+    <form class="form-inline d-flex flex-row">
+      <input #searchValue placeholder="Rechercher un profil..." id="typeahead-basic" type="text" class="form-control"
+             [ngbTypeahead]="search"/>
+      <button class="btn btn-outline-success my-2 my-sm-0" type="submit" (click)="goToProfile(searchValue.value)">
+        Search
+      </button>
+    </form>
+  </div>
+</nav>

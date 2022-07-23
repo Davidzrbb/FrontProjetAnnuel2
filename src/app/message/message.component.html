@@ -1,0 +1,58 @@
+<div class="spinner" ng-show="loading" *ngIf="loading">
+  <img src="http://w3lessons.info/demo/jquery-preloader/ajax-loader.gif"/>
+</div>
+<p *ngIf="returnError">
+  <ngb-alert [dismissible]="true" (closed)="closeAlert()">
+    <strong>Attention !</strong> {{errorMessage}}.
+  </ngb-alert>
+</p>
+<div class="d-flex flex-row height-size m-3">
+  <div id="div-list-messages" class=" bg-light">
+    <ul class="list-group">
+      <br>
+      <form class="form-inline d-flex flex-row">
+        <input #searchValue placeholder="Contacter..." id="typeahead-basic" type="text" class="form-control"
+               [ngbTypeahead]="search"/>
+        <button class="btn btn-outline-success my-2 my-sm-0" type="submit" (click)="moveSession(searchValue.value)">
+          Search
+        </button>
+      </form>
+      <br>
+      <li class="list-group-item list-group-item-action" *ngFor="let login of loginOther" (click)="moveSession(login)">
+        <strong>{{login}}</strong></li>
+    </ul>
+  </div>
+  <div class="flex-column w-100">
+    <div id="div-login" class="bg-light p-3 d-flex flex-row" *ngIf="!inboxBool">
+      <img [src]='pictureProfile' alt="Admin" class="rounded-circle"
+           width="100">
+      <div class="flex-column" style="margin-top: 1%; margin-left: 2%">
+        <h4 class="list-group-item-action bg-transparent" (click)="moveToProfil(user['login'])">@{{user["login"]}}</h4>
+        <h6>{{user["role"]}}</h6>
+      </div>
+      <div style="margin-top: 1%; margin-left: 2%">
+        <input type="submit" value="Proposer un contrat" *ngIf='roleToken == "parent" && user["role"] == "babysitter"'[routerLink]="['/contrat']"
+               [queryParams]="{login:user['login']}">
+      </div>
+    </div>
+    <div id="div-chat" class="bg-light d-flex flex-column" *ngIf="!inboxBool">
+      <br>
+      <div *ngFor="let message of messageArr">
+        <div [className]="(message.userId == userIdByToken) ? 'float-right' : 'float-left'">
+          <p [className]="(message.userId == userIdByToken) ? 'my-msg msg' : 'this-msg msg'">{{message.message}}</p>
+          <p>{{message.time | date: 'H:mm:ss'}}</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="input-group" *ngIf="!inboxBool">
+      <input [(ngModel)]="newMessage" (keyup)="$event.keyCode == 13 && sendMessage()" type="text"
+             placeholder="Type a message" class="form-control  bg-white shadow-none ">
+      <div class="input-group-append">
+        <button class="btn btn-link" (click)="sendMessage()"><i style="font-size: 200%;color: #5fbae9"
+                                                                class="fa fa-paper-plane-o plane"></i></button>
+      </div>
+    </div>
+
+  </div>
+</div>

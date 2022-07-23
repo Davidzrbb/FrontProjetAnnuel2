@@ -1,0 +1,432 @@
+<p *ngIf="!displayCreatePostsBool && !displaySearchPostsBool && returnError">
+  <ngb-alert [dismissible]="true" (closed)="closeAlert()">
+    <strong>Attention !</strong> {{errorMessage}}.
+  </ngb-alert>
+</p>
+<p *ngIf="returnSucces">
+  <ngb-alert [type]='success' (closed)="closeAlert()">
+    <strong>Merci !</strong> {{errorMessage}}.
+  </ngb-alert>
+</p>
+<div class="spinner" ng-show="loading" *ngIf="loading">
+  <img src="http://w3lessons.info/demo/jquery-preloader/ajax-loader.gif"/>
+</div>
+<div *ngIf="displayCreatePostsBool" class="bg-modal">
+  <p *ngIf="returnError">
+    <ngb-alert [dismissible]="true" (closed)="closeAlert()">
+      <strong>Attention !</strong> {{errorMessage}}.
+    </ngb-alert>
+  </p>
+  <div class="popup d-flex flex-column">
+    <h4 class="text-center">Creation d'un post</h4>
+    <br>
+    <div *ngIf="userRole == 'parent'">
+      <div *ngIf="!nextStepCreatePostsBool">
+        <form class="text-center">
+          <input type="number" #city placeholder="Entrez votre code postal...">
+          <input type="number" #hourlyWage placeholder="Taux horaire">
+          <input type="text" #description placeholder="Description...">
+          <input type="number" #numberChild placeholder="Nombre d'enfants... (max 10)"
+                 min="0" max="10" oninput="this.value = this.value.replace(/[^0-9.]/g, '');
+        this.value = this.value.replace(/^(?!(?:\d{1,2}|15)$)[0-9]\d+$/,15);">
+          <!-- Skills -->
+          <div class="d-flex flex-row justify-content-center">
+            <input #skill id="skill1" type="text" placeholder="Compétence">
+            <i style="margin-top: 4%; color: #39ace7" class="fa fa-check check-skill" aria-hidden="true"
+               (click)="onChangeSkills(skill.value)"></i>
+          </div>
+          <div class="d-flex flex-row">
+            <div *ngFor="let skill of listAllSkill">
+              <p> {{skill}}, </p>
+            </div>
+          </div>
+          <br>
+        </form>
+        <br>
+        <div class="d-flex flex-row justify-content-evenly">
+          <input type="submit" value="Continuer"
+                 (click)="savePost(city.value,hourlyWage.value,description.value,numberChild.value)">
+          <input type="submit" value="Annuler" (click)="displayCreatePosts()">
+        </div>
+      </div>
+      <div *ngIf="nextStepCreatePostsBool">
+        <app-calendar [item]=true (newItemEvent)="addItem($event)"></app-calendar>
+        <br>
+        <div class="d-flex flex-row justify-content-center">
+          <input type="submit" value="Enregistrer" (click)="createPosts()">
+          <input style="margin-left: 3% " type="submit" value="Annuler" (click)="displayCreatePosts()">
+        </div>
+      </div>
+    </div>
+    <div *ngIf="userRole == 'babysitter'">
+      <form class="text-center">
+        <select #activityZone (change)="onChangeSelect($event)">
+          <option value="0">Zone d'activité</option>
+          <option value="1">1 - Ain</option>
+          <option value="2">2 - Aisne</option>
+          <option value="3">3 - Allier</option>
+          <option value="4">4 - Alpes-de-Haute-Provence</option>
+          <option value="5">5 - Hautes-Alpes</option>
+          <option value="6">6 - Alpes-Maritimes</option>
+          <option value="7">7 - Ardèche</option>
+          <option value="8">8 - Ardennes</option>
+          <option value="9">9 - Ariège</option>
+          <option value="10">10 - Aube</option>
+          <option value="11">11 - Aude</option>
+          <option value="12">12 - Aveyron</option>
+          <option value="13">13 - Bouches-du-Rhône</option>
+          <option value="14">14 - Calvados</option>
+          <option value="15">15 - Cantal</option>
+          <option value="16">16 - Charente</option>
+          <option value="17">17 - Charente-Maritime</option>
+          <option value="18">18 - Cher</option>
+          <option value="19">19 - Corrèze</option>
+          <option value="21">21 - Côte-d'Or</option>
+          <option value="22">22 - Côtes-d'Armor</option>
+          <option value="23">23 - Creuse</option>
+          <option value="24">24 - Dordogne</option>
+          <option value="25">25 - Doubs</option>
+          <option value="26">26 - Drôme</option>
+          <option value="27">27 - Eure</option>
+          <option value="28">28 - Eure-et-Loir</option>
+          <option value="29">29 - Finistère</option>
+          <option value="2A">2A - Corse-du-Sud</option>
+          <option value="2B">2B - Haute-Corse</option>
+          <option value="30">30 - Gard</option>
+          <option value="31">31 - Haute-Garonne</option>
+          <option value="32">32 - Gers</option>
+          <option value="33">33 - Gironde</option>
+          <option value="34">34 - Hérault</option>
+          <option value="35">35 - Ille-et-Vilaine</option>
+          <option value="36">36 - Indre</option>
+          <option value="37">37 - Indre-et-Loire</option>
+          <option value="38">38 - Isère</option>
+          <option value="39">39 - Jura</option>
+          <option value="40">40 - Landes</option>
+          <option value="41">41 - Loir-et-Cher</option>
+          <option value="42">42 - Loire</option>
+          <option value="43">43 - Haute-Loire</option>
+          <option value="44">44 - Loire-Atlantique</option>
+          <option value="45">45 - Loiret</option>
+          <option value="46">46 - Lot</option>
+          <option value="47">47 - Lot-et-Garonne</option>
+          <option value="48">48 - Lozère</option>
+          <option value="49">49 - Maine-et-Loire</option>
+          <option value="50">50 - Manche</option>
+          <option value="51">51 - Marne</option>
+          <option value="52">52 - Haute-Marne</option>
+          <option value="53">53 - Mayenne</option>
+          <option value="54">54 - Meurthe-et-Moselle</option>
+          <option value="55">55 - Meuse</option>
+          <option value="56">56 - Morbihan</option>
+          <option value="57">57 - Moselle</option>
+          <option value="58">58 - Nièvre</option>
+          <option value="59">59 - Nord</option>
+          <option value="60">60 - Oise</option>
+          <option value="61">61 - Orne</option>
+          <option value="62">62 - Pas-de-Calais</option>
+          <option value="63">63 - Puy-de-Dôme</option>
+          <option value="64">64 - Pyrénées-Atlantiques</option>
+          <option value="65">65 - Hautes-Pyrénées</option>
+          <option value="66">66 - Pyrénées-Orientales</option>
+          <option value="67">67 - Bas-Rhin</option>
+          <option value="68">68 - Haut-Rhin</option>
+          <option value="69">69 - Rhône</option>
+          <option value="70">70 - Haute-Saône</option>
+          <option value="71">71 - Saône-et-Loire</option>
+          <option value="72">72 - Sarthe</option>
+          <option value="73">73 - Savoie</option>
+          <option value="74">74 - Haute-Savoie</option>
+          <option value="75">75 - Paris</option>
+          <option value="76">76 - Seine-Maritime</option>
+          <option value="77">77 - Seine-et-Marne</option>
+          <option value="78">78 - Yvelines</option>
+          <option value="79">79 - Deux-Sèvres</option>
+          <option value="80">80 - Somme</option>
+          <option value="81">81 - Tarn</option>
+          <option value="82">82 - Tarn-et-Garonne</option>
+          <option value="83">83 - Var</option>
+          <option value="84">84 - Vaucluse</option>
+          <option value="85">85 - Vendée</option>
+          <option value="86">86 - Vienne</option>
+          <option value="87">87 - Haute-Vienne</option>
+          <option value="88">88 - Vosges</option>
+          <option value="89">89 - Yonne</option>
+          <option value="90">90 - Territoire de Belfort</option>
+          <option value="91">91 - Essonne</option>
+          <option value="92">92 - Hauts-de-Seine</option>
+          <option value="93">93 - Seine-Saint-Denis</option>
+          <option value="94">94 - Val-de-Marne</option>
+          <option value="95">95 - Val-d'Oise</option>
+          <option value="971">971 - Guadeloupe</option>
+          <option value="972">972 - Martinique</option>
+          <option value="973">973 - Guyane</option>
+          <option value="974">974 - La Réunion</option>
+          <option value="976">976 - Mayotte</option>
+        </select>
+        <div class="d-flex flex-row">
+          <div *ngFor="let commune of listCommuneSelect">
+            <p> {{commune}}, </p>
+          </div>
+        </div>
+        <input type="number" #hourlyWage placeholder="Taux horaire">
+        <input type="text" #description placeholder="Description...">
+        <br>
+      </form>
+      <br>
+      <div class="d-flex flex-row justify-content-evenly">
+        <input type="submit" value="Valider"
+               (click)="savePost('',hourlyWage.value,description.value,'')">
+        <input type="submit" value="Annuler" (click)="displayCreatePosts()">
+      </div>
+    </div>
+  </div>
+</div>
+<div *ngIf="displaySearchPostsBool" class="bg-modal">
+  <p *ngIf="displaySearchPostsBool && returnError">
+    <ngb-alert [dismissible]="true" (closed)="closeAlert()">
+      <strong>Attention !</strong> {{errorMessage}}.
+    </ngb-alert>
+  </p>
+  <div class="popup text-center">
+    <h4 class="text-center">Recherche des posts</h4>
+    <br>
+    <!-- Avaibality -->
+    <select (change)="onChangeSelectAvaibalitySearch($event)">
+      <option value="0">Disponibilité</option>
+      <option value="lundi">Lundi</option>
+      <option value="mardi">Mardi</option>
+      <option value="mercredi">Mercredi</option>
+      <option value="jeudi">Jeudi</option>
+      <option value="vendredi">Vendredi</option>
+      <option value="samedi">Samedi</option>
+      <option value="dimanche">Dimanche</option>
+    </select>
+    <div class="d-flex flex-row">
+      <div *ngFor="let day of listDaysSelect">
+        <p> {{day}}, </p>
+      </div>
+    </div>
+    <!-- Comunes -->
+    <select (change)="onChangeSelect($event)">
+      <option value="0">Zone d'activité</option>
+      <option value="1">1 - Ain</option>
+      <option value="2">2 - Aisne</option>
+      <option value="3">3 - Allier</option>
+      <option value="4">4 - Alpes-de-Haute-Provence</option>
+      <option value="5">5 - Hautes-Alpes</option>
+      <option value="6">6 - Alpes-Maritimes</option>
+      <option value="7">7 - Ardèche</option>
+      <option value="8">8 - Ardennes</option>
+      <option value="9">9 - Ariège</option>
+      <option value="10">10 - Aube</option>
+      <option value="11">11 - Aude</option>
+      <option value="12">12 - Aveyron</option>
+      <option value="13">13 - Bouches-du-Rhône</option>
+      <option value="14">14 - Calvados</option>
+      <option value="15">15 - Cantal</option>
+      <option value="16">16 - Charente</option>
+      <option value="17">17 - Charente-Maritime</option>
+      <option value="18">18 - Cher</option>
+      <option value="19">19 - Corrèze</option>
+      <option value="21">21 - Côte-d'Or</option>
+      <option value="22">22 - Côtes-d'Armor</option>
+      <option value="23">23 - Creuse</option>
+      <option value="24">24 - Dordogne</option>
+      <option value="25">25 - Doubs</option>
+      <option value="26">26 - Drôme</option>
+      <option value="27">27 - Eure</option>
+      <option value="28">28 - Eure-et-Loir</option>
+      <option value="29">29 - Finistère</option>
+      <option value="2A">2A - Corse-du-Sud</option>
+      <option value="2B">2B - Haute-Corse</option>
+      <option value="30">30 - Gard</option>
+      <option value="31">31 - Haute-Garonne</option>
+      <option value="32">32 - Gers</option>
+      <option value="33">33 - Gironde</option>
+      <option value="34">34 - Hérault</option>
+      <option value="35">35 - Ille-et-Vilaine</option>
+      <option value="36">36 - Indre</option>
+      <option value="37">37 - Indre-et-Loire</option>
+      <option value="38">38 - Isère</option>
+      <option value="39">39 - Jura</option>
+      <option value="40">40 - Landes</option>
+      <option value="41">41 - Loir-et-Cher</option>
+      <option value="42">42 - Loire</option>
+      <option value="43">43 - Haute-Loire</option>
+      <option value="44">44 - Loire-Atlantique</option>
+      <option value="45">45 - Loiret</option>
+      <option value="46">46 - Lot</option>
+      <option value="47">47 - Lot-et-Garonne</option>
+      <option value="48">48 - Lozère</option>
+      <option value="49">49 - Maine-et-Loire</option>
+      <option value="50">50 - Manche</option>
+      <option value="51">51 - Marne</option>
+      <option value="52">52 - Haute-Marne</option>
+      <option value="53">53 - Mayenne</option>
+      <option value="54">54 - Meurthe-et-Moselle</option>
+      <option value="55">55 - Meuse</option>
+      <option value="56">56 - Morbihan</option>
+      <option value="57">57 - Moselle</option>
+      <option value="58">58 - Nièvre</option>
+      <option value="59">59 - Nord</option>
+      <option value="60">60 - Oise</option>
+      <option value="61">61 - Orne</option>
+      <option value="62">62 - Pas-de-Calais</option>
+      <option value="63">63 - Puy-de-Dôme</option>
+      <option value="64">64 - Pyrénées-Atlantiques</option>
+      <option value="65">65 - Hautes-Pyrénées</option>
+      <option value="66">66 - Pyrénées-Orientales</option>
+      <option value="67">67 - Bas-Rhin</option>
+      <option value="68">68 - Haut-Rhin</option>
+      <option value="69">69 - Rhône</option>
+      <option value="70">70 - Haute-Saône</option>
+      <option value="71">71 - Saône-et-Loire</option>
+      <option value="72">72 - Sarthe</option>
+      <option value="73">73 - Savoie</option>
+      <option value="74">74 - Haute-Savoie</option>
+      <option value="75">75 - Paris</option>
+      <option value="76">76 - Seine-Maritime</option>
+      <option value="77">77 - Seine-et-Marne</option>
+      <option value="78">78 - Yvelines</option>
+      <option value="79">79 - Deux-Sèvres</option>
+      <option value="80">80 - Somme</option>
+      <option value="81">81 - Tarn</option>
+      <option value="82">82 - Tarn-et-Garonne</option>
+      <option value="83">83 - Var</option>
+      <option value="84">84 - Vaucluse</option>
+      <option value="85">85 - Vendée</option>
+      <option value="86">86 - Vienne</option>
+      <option value="87">87 - Haute-Vienne</option>
+      <option value="88">88 - Vosges</option>
+      <option value="89">89 - Yonne</option>
+      <option value="90">90 - Territoire de Belfort</option>
+      <option value="91">91 - Essonne</option>
+      <option value="92">92 - Hauts-de-Seine</option>
+      <option value="93">93 - Seine-Saint-Denis</option>
+      <option value="94">94 - Val-de-Marne</option>
+      <option value="95">95 - Val-d'Oise</option>
+      <option value="971">971 - Guadeloupe</option>
+      <option value="972">972 - Martinique</option>
+      <option value="973">973 - Guyane</option>
+      <option value="974">974 - La Réunion</option>
+      <option value="976">976 - Mayotte</option>
+    </select>
+    <div class="d-flex flex-row">
+      <div *ngFor="let commune of listCommuneSelect">
+        <p> {{commune}}, </p>
+      </div>
+    </div>
+    <!-- Category -->
+    <select (change)="onChangeSelectCategory($event)" class="fadeIn second" name="pets" id="pet-select">
+      <option value="0">Categorie</option>
+      <option *ngFor="let elem of listAllCategories">{{elem}}</option>
+    </select>
+    <div class="d-flex flex-row">
+      <div *ngFor="let category of listCategorySelect">
+        <p> {{category}}, </p>
+      </div>
+    </div>
+    <!-- Skills -->
+    <div class="d-flex flex-row justify-content-center">
+      <input #skill id="skill" type="text" placeholder="Compétence">
+      <i style="margin-top: 4%; color: #39ace7" class="fa fa-check check-skill" aria-hidden="true"
+         (click)="onChangeSkills(skill.value)"></i>
+    </div>
+    <div class="d-flex flex-row">
+      <div *ngFor="let skill of listAllSkill">
+        <p> {{skill}}, </p>
+      </div>
+    </div>
+    <br>
+    <div class="d-flex flex-row justify-content-evenly">
+      <input type="submit" value="Valider" (click)="searchPost()">
+      <input type="submit" value="Annuler" (click)="displaySearchPosts()">
+    </div>
+  </div>
+</div>
+<div>
+  <br>
+  <div class="d-flex flex-row justify-content-evenly">
+    <input type="submit" value="Creer" (click)="displayCreatePosts()">
+    <input type="submit" value="Rechercher" (click)="displaySearchPosts()">
+  </div>
+  <div class="d-flex flex-row justify-content-evenly m-5">
+    <select class="w-25" (change)="onChangeFilter($event,'role')" [disabled]="startSeach" [ngClass]="{'select-disabled': startSeach}">
+      <option value="null" [selected]="startSeach">Role</option>
+      <option value="babysitter">Babysitter</option>
+      <option value="parent">Parent</option>
+    </select>
+    <select class="w-25" (change)="onChangeFilter($event,'hourlyWage')">
+      <option value="null">Taux Horraire</option>
+      <option value="desc">Descendant</option>
+      <option value="asc">Ascendant</option>
+    </select>
+    <select id="advenced-search" class="w-25" (change)="onChangeFilter($event,'search')" [disabled]="!startSeach" [ngClass]="{'select-disabled': !startSeach}">
+      <option value="null" [selected]="!startSeach">Recherche avancée</option>
+      <option value="false">Desactivée</option>
+    </select>
+  </div>
+  <div *ngIf="listPosts.length > 0 && !loading">
+    <div class="d-flex flex-wrap justify-content-evenly">
+      <div *ngFor="let post of listPosts">
+        <div class="card shadow card-hover" style="width: 40vh;margin: 5%; border-radius: 5%">
+          <div class="w-100 text-center d-flex flex-row justify-content-center align-items-center "
+               style="background-color:#f8f9fa;">
+            <img [src]="post.photo" alt="Card image cap" width="50" style="margin: 5%">
+            <div class="d-flex flex-column">
+              <h5 class="card-title login-post" [routerLink]="['/profile']"
+                  [queryParams]="{login:post.login}">@{{post.login}}</h5>
+              <p style="color: #92badd"><i>{{post.type}}</i></p>
+            </div>
+          </div>
+          <div class="card-body">
+            <textarea class="form-control" id="exampleFormControlTextarea1" rows="3" readonly [value]="post.description"
+                      style="resize: none;overflow-y: scroll;"></textarea>
+            <br>
+            <div *ngIf="post.type == 'parent'">
+              <label>Code Postal : </label>
+              <span> {{ post['city-code']}}</span>
+              <br><br>
+              <label>Taux Horraire : </label>
+              <span> {{ post['hourlyWage']}} €</span>
+              <div *ngIf="post.numberChild != null">
+                <br>
+                <label>Nombre d'enfant : </label>
+                <span> {{post.numberChild}}</span>
+              </div>
+              <div *ngIf="post.avaibality != ''">
+                <br>
+                <label>Disponibilités : </label>
+                <span *ngFor="let avaibality of post.avaibality"> {{avaibality}}</span>
+              </div>
+              <div *ngIf="post.skils != ''">
+                <br>
+                <label>Compétences : </label>
+                <ul class="list-group " *ngFor="let skill of post.skils">
+                  <li class="list-group-item d-flex flex-column">{{skill}}</li>
+                </ul>
+              </div>
+            </div>
+            <div *ngIf="post.type == 'babysitter'">
+              <label>Zone d'activité : </label>
+              <span *ngFor="let zone of post.activityZone"> {{zone}}</span>
+              <br><br>
+              <label>Taux Horraire : </label>
+              <span> {{ post['hourlyWage']}} €</span>
+            </div>
+            <br>
+            <div class="text-center w-100">
+              <a [routerLink]="['/message']"
+                 [queryParams]="{login:post.login}" class="btn btn-primary"
+                 style="background-color: #39ace7;border: none">Envoyer un message</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div *ngIf="listPosts.length <= 0 && !loading" class="text-center">
+    <h4>Aucun posts n'est disponible...</h4>
+  </div>
+</div>

@@ -1,0 +1,144 @@
+<div *ngIf="displayQrCode" class="bg-modal">
+  <div class="popup d-flex flex-column">
+    <qr-code [value]="urlConnexionQrCode" [size]="400"></qr-code>
+    <br>
+    <input type="submit" value="close" (click)="generateQRCODE(-1)">
+  </div>
+</div>
+<div class="spinner" ng-show="loading" *ngIf="loading">
+  <img src="http://w3lessons.info/demo/jquery-preloader/ajax-loader.gif"/>
+</div>
+<p *ngIf="returnError">
+  <ngb-alert [dismissible]="true" (closed)="closeAlert()">
+    <strong>Attention !</strong> {{errorMessage}}.
+  </ngb-alert>
+</p>
+<div class="text-center">
+<br>
+  <div class="d-flex flex-row justify-content-evenly ">
+    <input type="submit" value="Creer un contrat" (click)="displayContract()" *ngIf="roleToken =='parent'"/>
+    <input type="submit" value="Mes contrats" (click)="displayHistory()"/>
+  </div>
+  <div *ngIf="displayHistoryBool && !displayContractBool">
+    <div *ngFor="let elem of contracts" class="">
+      <ul class="list-group  ">
+        <li class="list-group-item d-flex flex-row justify-content-evenly">
+          <p class="follow" (click)="generateQRCODE(elem.id)"  *ngIf="roleToken == 'babysitter'"><i class="fa fa-qrcode" aria-hidden="true"></i> QRCODE</p>
+          <p>{{elem['validateAt'] | date: 'dd/MM/yyyy'}}</p>
+          <p *ngIf="elem['step'] == -1">Refusé par le Babysitter</p>
+          <p *ngIf="elem['step'] == 0"> Contrat en attente de validation par le Babysitter</p>
+          <p *ngIf="elem['step'] == 1"> Contrat en cours</p>
+          <p *ngIf="elem['step'] == 2"> Contrat en attente de payement</p>
+          <p *ngIf="elem['step'] == 3"> Contrat terminé</p>
+          <input type="submit" value="Voir le contrat" (click)="moveToHtmlContract(elem['id'])">
+          <input type="submit" class="bg-success" value="Valider" (click)="updateStep(elem['id'],1)"
+                 *ngIf="roleToken == 'babysitter' && elem['step'] =='0'">
+          <input type="submit" class="bg-danger" value="Refuser" (click)="updateStep(elem['id'],-1)"
+                 *ngIf="roleToken == 'babysitter' && elem['step'] =='0'">
+          <input type="submit" class="bg-danger" value="Arreter le contrat" (click)="updateStep(elem['id'],2)" *ngIf="elem['step'] =='1'">
+          <input type="submit" value="Payer" (click)="makePayment(elem['id'])"
+                 *ngIf="roleToken == 'parent' && elem['step'] =='2'">
+        </li>
+      </ul>
+
+
+    </div>
+  </div>
+  <div *ngIf="!displayHistoryBool && displayContractBool">
+    <div class="wrapper fadeInDown">
+      <div id="formContent">
+        <form class="form-inline d-flex flex-row fadeIn first" *ngIf="!displayHours">
+          <input #searchValue placeholder="Charger un babysitter.." id="typeahead-basic" type="text"
+                 class="form-control"
+                 [ngbTypeahead]="search"/>
+          <button class="btn btn-outline-success my-2 my-sm-0" type="submit"
+                  (click)="replaceBabysitter(searchValue.value)">
+            Search
+          </button>
+        </form>
+
+        <div *ngIf="!displayHours">
+          <div class="fadeIn first">
+            <br>
+            <h3>Babysitter</h3>
+            <br>
+          </div>
+          <div>
+            <input type="text" #nom class="fadeIn second" placeholder="Nom" value="{{user['lastname']}} " readonly>
+            <input type="text" #prenom class="fadeIn third" placeholder="Prenom" value="{{user['name']}} " readonly>
+            <input type="number" #age class="fadeIn third" placeholder="Age"
+                   value="{{user['age']}}" readonly>
+            <br><br>
+            <input type="submit" class="fadeIn fourth" value="Continuer"
+                   (click)="saveBabysitter()">
+          </div>
+        </div>
+        <div *ngIf="displayHours">
+          <br>
+          <h3>Horaire</h3>
+          <br>
+          <div class="text-center">
+            <input type="number" #hourlyWage placeholder="Taux horraire" min="1">
+            <input type="number" #totalHours placeholder="Nombre d'heure totale" min="1">
+            <br><br>
+            <form class="row row-cols-sm-auto justify-content-evenly">
+              <div class="col-12">
+                <p>Date de début</p>
+                <div class="dp-hidden position-absolute">
+                  <div class="input-group">
+                    <input name="datepicker"
+                           class="form-control"
+                           ngbDatepicker
+                           #datepicker="ngbDatepicker"
+                           [autoClose]="'outside'"
+                           (dateSelect)="onDateSelection($event)"
+                           [displayMonths]="2"
+                           [dayTemplate]="t"
+                           outsideDays="hidden"
+                           [startDate]="fromDate!"
+                           tabindex="-1">
+                    <ng-template #t let-date let-focused="focused">
+          <span class="custom-day"
+                [class.focused]="focused"
+                [class.range]="isRange(date)"
+                [class.faded]="isHovered(date) || isInside(date)"
+                (mouseenter)="hoveredDate = date"
+                (mouseleave)="hoveredDate = null">
+            {{ date.day }}
+          </span>
+                    </ng-template>
+                  </div>
+                </div>
+                <div class="input-group">
+                  <input #dpFromDate
+                         class="form-control" placeholder="dd-mm-yyyy"
+                         name="dpFromDate"
+                         [value]="formatter.format(fromDate) | date: 'dd/MM/yyyy'"
+                         (input)="fromDate = validateInput(fromDate, dpFromDate.value)" readonly>
+                  <button class="btn btn-outline-secondary calendar" (click)="datepicker.toggle()" type="button"><i
+                    class="fa fa-calendar" aria-hidden="true" style="color: #39ace7"></i></button>
+                </div>
+              </div>
+              <div class="col-12" style="margin-top: 5%">
+                <p>Date de fin</p>
+                <div class="input-group">
+                  <input #dpToDate
+                         class="form-control" placeholder="dd-mm-yyyy"
+                         name="dpToDate"
+                         [value]="formatter.format(toDate ) | date: 'dd/MM/yyyy'"
+                         (input)="toDate = validateInput(toDate, dpToDate.value)" readonly>
+                  <button class="btn btn-outline-secondary calendar" (click)="datepicker.toggle()" type="button"><i
+                    class="fa fa-calendar" style="color: #39ace7" aria-hidden="true"></i></button>
+                </div>
+              </div>
+            </form>
+            <br>
+            <input type="submit" value="Valider"
+                   (click)="saveHours(hourlyWage.value,dpFromDate.value,dpToDate.value,totalHours.value)">
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <br>
+</div>

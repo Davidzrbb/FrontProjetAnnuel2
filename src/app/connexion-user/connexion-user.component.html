@@ -1,0 +1,22 @@
+<div class="wrapper fadeInDown">
+  <div id="formContent">
+    <p *ngIf="returnError">
+      <ngb-alert [dismissible]="true" (closed)="closeAlert()">
+        <strong>Attention !</strong> Pseudo ou mot de passe incorrect.
+      </ngb-alert>
+    </p>
+    <div class="fadeIn first">
+      <h3>Connexion</h3>
+      <br>
+    </div>
+    <div>
+      <input type="text" #login class="fadeIn second" placeholder="Pseudo">
+      <input type="password" #password class="fadeIn third" placeholder="Mot de passe">
+      <br><br>
+      <input type="submit" class="fadeIn fourth" value="Valider" (click)="checkConnected(login.value,password.value)" [disabled]="clickConnect">
+    </div>
+    <div id="formFooter">
+      <a class="underlineHover" routerLink="/subscribe" routerLinkActive="active">Inscription</a>
+    </div>
+  </div>
+</div>

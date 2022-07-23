@@ -1,0 +1,77 @@
+<div class="wrapper fadeInDown">
+  <div id="formContent">
+    <p *ngIf="returnError">
+      <ngb-alert [dismissible]="true" (closed)="closeAlert()">
+        <strong>Attention !</strong> {{errorMessage}}.
+      </ngb-alert>
+    </p>
+    <br>
+    <div class="">
+      <div *ngIf="!nextSubscribeBool" class="d-flex flex-row">
+        <h3 style="margin-left:35%">Inscription</h3>
+      </div>
+      <div *ngIf="nextSubscribeBool" >
+        <div class="d-flex flex-row">
+        <i style="margin-left:5%" class="fa fa-arrow-left" aria-hidden="true" (click)="nextSubscribe()"></i>
+        <h3 style="margin-left:27%">Inscription</h3>
+        </div>
+        <h2>Babysitter</h2>
+      </div>
+      <br>
+    </div>
+    <div [className]="(nextSubscribeBool) ? 'd-none' : 'd-block'">
+      <div class="d-flex flex-row mx-auto name-lastname">
+        <input type="text" #name placeholder="Prenom">
+        <input type="text" #lastname placeholder="Nom">
+      </div>
+      <input type="text" #login placeholder="Pseudo">
+      <input type="text" #email placeholder="Email">
+      <input type="password" #password placeholder="Mot de passe">
+      <!--<input type="text" #photo class="fadeIn third" placeholder="Photo">-->
+      <!--<input type="text" #description class="fadeIn third" placeholder="Description">-->
+      <br><br>
+      <div class="btn-group  " role="group" ngbRadioGroup name="radioBasic" [ngModel]="role">
+        <label ngbButtonLabel class="btn-primary">
+          <input ngbButton type="radio" class="btn-check" value="parent" #parent (click)="modifyRole(parent.value)">
+          Parent
+        </label>
+        <label ngbButtonLabel class="btn-primary ">
+          <input ngbButton type="radio" class="btn-check " value="babysitter" #babysitter
+                 (click)="modifyRole(babysitter.value)"> Babysitter
+        </label>
+      </div>
+      <br><br>
+      <div *ngIf="role == 'parent'">
+        <input type="submit" value="Valider"
+               (click)="sendUserSubscribe(login.value,password.value,lastname.value,name.value,null,null,email.value)">
+      </div>
+      <div *ngIf="role == 'babysitter'">
+        <input type="submit" value="Continuer"
+               (click)="nextSubscribe()">
+      </div>
+    </div>
+    <div *ngIf="nextSubscribeBool">
+      <input type="number" #age placeholder="Age" min="0" max="100" oninput="this.value = this.value.replace(/[^0-9.]/g, '');
+       this.value = this.value.replace(/^(?!(?:\d{1,2}|100)$)[0-9]\d+$/,100);">
+<br><br>
+      <div class="btn-group" role="group" ngbRadioGroup name="radioBasic" [ngModel]="sexe">
+        <label ngbButtonLabel class="btn-primary">
+          <input ngbButton type="radio" class="btn-check" value="1" #homme (click)="modifySexe(homme.value)">
+          Homme
+        </label>
+        <label ngbButtonLabel class="btn-primary ">
+          <input ngbButton type="radio" class="btn-check " value="2" #femme
+                 (click)="modifySexe(femme.value)"> Femme
+        </label>
+      </div>
+
+      <br><br>
+      <input type="submit" value="Valider"
+             (click)="sendUserSubscribe(login.value,password.value,lastname.value,name.value,age.value,sexe,email.value)">
+      <br>
+    </div>
+    <div id="formFooter">
+      <a class="underlineHover" routerLink="/login" routerLinkActive="active">Connexion</a>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,4 @@
+.border-hover-img:hover {
+  border: 1px solid #39ace7;
+  cursor: pointer;
+}

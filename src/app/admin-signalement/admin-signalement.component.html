@@ -1,0 +1,25 @@
+<div *ngIf="haveSignalements">
+  <h3 class="text-center mt-5">Signalements</h3>
+  <br><br>
+  <div class="d-flex flex-wrap flex-row justify-content-evenly">
+    <div *ngFor="let signalement of signalements">
+      <div class="card bgCardHead" style="width: 18rem;">
+        <div class="w-100 my-1 text-center bgCardPhoto">
+          <img class="img" [src]="photos[signalement.idProfile]" alt="Card image cap" width="125">
+        </div>
+        <div class="card-body bgCardBody">
+          <div class="d-flex flex-row justify-content-between">
+            <h5 class="line-h-40">{{names[signalement.idProfile]}}</h5>
+            <div class="circle-40">
+              {{numberSignalements[signalement.idProfile]}}
+            </div>
+          </div>
+          <a (click)="goToSpecificProfile(signalement.idProfile)" class="btn btn-primary">Voir le(s) signalement(s)</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div *ngIf="!haveSignalements">
+  <h3 class="text-center mt-5">Pas de signalements</h3>
+</div>

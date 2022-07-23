@@ -1,0 +1,8 @@
+<main>
+  <app-navbar></app-navbar>
+  <router-outlet></router-outlet>
+  <div class="spinner" ng-show="loading" *ngIf="(authGuard.loader$ | async)">
+    <img src="http://w3lessons.info/demo/jquery-preloader/ajax-loader.gif"/>
+  </div>
+</main>
+

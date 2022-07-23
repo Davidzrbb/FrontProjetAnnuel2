@@ -1,0 +1,60 @@
+<div>
+  <table class="table table-striped" *ngIf="item">
+    <thead>
+    <tr>
+      <th scope="col">#</th>
+      <th scope="col">Lundi</th>
+      <th scope="col">Mardi</th>
+      <th scope="col">Mercredi</th>
+      <th scope="col">Jeudi</th>
+      <th scope="col">Vendredi</th>
+      <th scope="col">Samedi</th>
+      <th scope="col">Dimanche</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr *ngFor="let country of days; let i = index">
+      <th scope="row">{{ i }}H</th>
+      <td [className]="(country._lundi == 'X') ? 'bg-green' : 'bg-red'" (click)="logDay('lundi',i,country._lundi)"></td>
+      <td [className]="(country._mardi == 'X') ? 'bg-green' : 'bg-red'" (click)="logDay('mardi',i,country._mardi)"></td>
+      <td [className]="(country._mercredi == 'X') ? 'bg-green' : 'bg-red'"
+          (click)="logDay('mercredi',i,country._mercredi)"></td>
+      <td [className]="(country._jeudi == 'X') ? 'bg-green' : 'bg-red'" (click)="logDay('jeudi',i,country._jeudi)"></td>
+      <td [className]="(country._vendredi == 'X') ? 'bg-green' : 'bg-red'"
+          (click)="logDay('vendredi',i,country._vendredi)"></td>
+      <td [className]="(country._samedi == 'X') ? 'bg-green' : 'bg-red'"
+          (click)="logDay('samedi',i,country._samedi)"></td>
+      <td [className]="(country._dimanche == 'X') ? 'bg-green' : 'bg-red'"
+          (click)="logDay('dimanche',i,country._dimanche)"></td>
+    </tr>
+    </tbody>
+  </table>
+
+  <br>
+  <table class="table table-striped" *ngIf="!item">
+    <thead>
+    <tr>
+      <th scope="col">#</th>
+      <th scope="col">Lundi</th>
+      <th scope="col">Mardi</th>
+      <th scope="col">Mercredi</th>
+      <th scope="col">Jeudi</th>
+      <th scope="col">Vendredi</th>
+      <th scope="col">Samedi</th>
+      <th scope="col">Dimanche</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr *ngFor="let country of days; index as i">
+      <th scope="row">{{ i }}H</th>
+      <td [className]="(country._lundi == 'X') ? 'bg-green' : 'bg-red'"></td>
+      <td [className]="(country._mardi == 'X') ? 'bg-green' : 'bg-red'"></td>
+      <td [className]="(country._mercredi == 'X') ? 'bg-green' : 'bg-red'"></td>
+      <td [className]="(country._jeudi == 'X') ? 'bg-green' : 'bg-red'"></td>
+      <td [className]="(country._vendredi == 'X') ? 'bg-green' : 'bg-red'"></td>
+      <td [className]="(country._samedi == 'X') ? 'bg-green' : 'bg-red'"></td>
+      <td [className]="(country._dimanche == 'X') ? 'bg-green' : 'bg-red'"></td>
+    </tr>
+    </tbody>
+  </table>
+</div>

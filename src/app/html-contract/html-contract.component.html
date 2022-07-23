@@ -1,0 +1,34 @@
+<div class="spinner" ng-show="loading" *ngIf="loading">
+  <img src="http://w3lessons.info/demo/jquery-preloader/ajax-loader.gif"/>
+</div>
+<br>
+<div class="text-center" >
+  <input type="submit" value="Extraire PDF" (click)="download()">
+</div>
+<div id="table" class="m-5" *ngIf="!loading">
+  <h3 class="text-center">Contrat de garde occasionnelle</h3>
+  <br>
+  <h6>Entre l'employeur : Mr/Mme {{parent[0]["lastname"].toUpperCase()}} {{parent[0]["name"]}} </h6>
+  <br>
+  <h6>Et le.la salarié.e : Mr/Mme {{babysitter[0]["lastname"].toUpperCase()}} {{babysitter[0]["name"]}} </h6>
+  <br>
+  <h6>A partir du {{contract["startDate"] | date: 'dd/MM/yyyy'}}
+    jusqu'au {{contract["endDate"] | date: 'dd/MM/yyyy'}} </h6>
+  <br>
+  <h6>Quant à la rémunération, le salaire brut mensuel correspond au nombre d'heures d'accueil mensuel multiplié par le
+    salaire horaire brut de base, soit : {{contract["numberOfHours"]}} heures x {{contract["hourlyWage"]}} €
+    = {{contract["numberOfHours"] * contract["hourlyWage"]}} €</h6>
+  <br>
+  <h6>Fait à Paris</h6>
+  <br>
+  <h6>Le {{contract["validateAt"] | date: 'dd/MM/yyyy' }} </h6>
+  <br>
+  <h6>Signature de l'employeur précédée de la mention "lu et approuvé"</h6>
+  <p>{{parent[0]["lastname"].toUpperCase()}} lu et approuvé</p>
+  <br>
+  <h6>Signature du salarié.e précédée de la mention "lu et approuvé"</h6>
+  <p *ngIf="contract['step'] != 0"> {{babysitter[0]["lastname"].toUpperCase()}} lu et approuvé</p>
+  <br>
+</div>
+
+

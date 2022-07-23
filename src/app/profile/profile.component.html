@@ -1,0 +1,388 @@
+<div *ngIf="displaySignalementBool" class="bg-modal">
+  <div class="popup d-flex flex-column">
+    <h4 class="text-center">Signaler un utilisateur</h4>
+    <br>
+    <div class="d-flex flex-column">
+      <label for="">Raison du signalement</label>
+      <textarea #txt class="form-control" name="raison" id="" rows="3" style="width: 100%"></textarea>
+    </div>
+    <br>
+    <div class="d-flex flex-row justify-content-center">
+      <input type="submit" value="Envoyer" (click)="createSignalement(txt.value)">
+      <input type="submit" value="Annuler" style="margin-left: 5%" (click)="displaySignalement()">
+    </div>
+    <br>
+  </div>
+</div>
+
+<div *ngIf="displayCertifiedBool" class="bg-modal">
+  <p *ngIf="returnError && displayCertifiedBool">
+    <ngb-alert [dismissible]="true" (closed)="closeAlert()">
+      <strong>Attention !</strong> {{errorMessage}}.
+    </ngb-alert>
+  </p>
+  <div class="popup d-flex flex-column text-center">
+    <h4 class="text-center">Certifier un diplôme</h4>
+    <br>
+    <p><i>Veuillez vous rendre sur le site : <a href="https://diplome.gouv.fr/sanddiplome/login" target="_blank">Diplôme
+      Gouv</a></i></p>
+    <p><i>Télécharger votre attestation et renseignez les informations suivantes :</i></p>
+    <div class="w-100 text-center">
+      <input #lastname type="text" placeholder="Nom de famille">
+      <input #pass type="text" placeholder="Code de vérification">
+    </div>
+    <br>
+    <div class="d-flex flex-row justify-content-center">
+      <input type="submit" value="Envoyer" (click)="createCertified(lastname.value,pass.value)">
+      <input type="submit" value="Annuler" style="margin-left: 5%" (click)="displayCertified(skillId)">
+    </div>
+    <br>
+  </div>
+</div>
+
+<div *ngIf="displayUpdatePost" class="bg-modal">
+  <p *ngIf="returnError && displayUpdatePost">
+    <ngb-alert [dismissible]="true" (closed)="closeAlert()">
+      <strong>Attention !</strong> {{errorMessage}}.
+    </ngb-alert>
+  </p>
+  <div class="popup d-flex flex-column text-center">
+    <h4 class="text-center">Modifier un poste</h4>
+    <br>
+    <div *ngFor="let post of listPosts">
+      <div *ngIf="post.id === idPostUpdate">
+        <textarea #description style="width: 80%">{{post.description}}</textarea>
+        <br><br>
+        <div class="d-flex flex-row justify-content-evenly">
+          <div class="d-flex flex-column">
+            <h6> Tarif horraire : </h6> <input #hourlyWage value="{{post.hourlyWage}}">
+          </div>
+        </div>
+        <br>
+        <div class="d-flex flex-row justify-content-center">
+          <input type="submit" value="Enregistrer" (click)="updatePosts(null,hourlyWage.value,description.value)">
+          <input type="submit" value="Annuler" style="margin-left: 5%" (click)="updatePosts(post.id,hourlyWage.value,description.value)">
+        </div>
+      </div>
+    </div>
+    <br>
+  </div>
+</div>
+
+<div class="spinner" ng-show="loading" *ngIf="loading">
+  <img src="http://w3lessons.info/demo/jquery-preloader/ajax-loader.gif"/>
+</div>
+
+<div class="container">
+  <div class="main-body">
+    <p *ngIf="returnError && !displayCertifiedBool && !displayUpdatePost">
+      <ngb-alert [dismissible]="true" (closed)="closeAlert()">
+        <strong>Attention !</strong> {{errorMessage}}.
+      </ngb-alert>
+    </p>
+    <p *ngIf="returnSucces">
+      <ngb-alert [type]='success' (closed)="closeAlert()">
+        <strong>Merci !</strong> {{errorMessage}}.
+      </ngb-alert>
+    </p>
+    <br>
+    <div class="row gutters-sm">
+      <div class="col-md-4 mb-3">
+        <div class="card">
+          <div class="card-body">
+            <div class="d-flex flex-column align-items-center text-center text-break">
+              <img [src]='pictureProfile' alt="Admin" class="rounded-circle"
+                   width="150">
+              <div class="mt-3">
+                <h4>@{{user['login']}}</h4>
+                <p class="text-secondary mb-1">{{user['role']}}</p>
+                <p class="text-muted font-size-sm" *ngIf="user['description'] != 'null'">{{user['description']}}</p>
+                <p class="fadeIn fourth signalement" *ngIf="!samePeople" (click)="displaySignalement()"><i
+                  class="fa fa-exclamation"
+                  aria-hidden="true"></i><i> Signaler un
+                  problème</i></p>
+                <input type="submit" value="Message" [routerLink]="['/message']"
+                       [queryParams]="{login:user['login']}" *ngIf='!samePeople'>
+                <button class="btn btn-md btn-danger mx-3" *ngIf="!samePeople && roleByToken === 'admin' && (userBan.banned === null || userBan.banned == false)" (click)="banUser(userBan.id)"><i class="fa fa-ban"></i> Bloquer </button>
+                <button class="btn btn-md btn-secondary mx-3"*ngIf="!samePeople && roleByToken === 'admin' && (userBan.banned != false && userBan.banned !== null)" (click)="unBanUser(userBan.id)"><i class="fa fa-ban"></i> Débloquer </button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <br>
+        <div class="card mt-3 text-center" class="text-center">
+          <h6 class="mb-0">Avis</h6>
+          <br>
+          <input (click)="displayComment()" *ngIf="!samePeople && !displayCommentBool" class="w-25" type="submit"
+                 value="Ajouter">
+          <input (click)="displayComment()" *ngIf="!samePeople && displayCommentBool" class="w-25" type="submit"
+                 value="Annuler">
+          <br>
+          <br>
+          <div *ngIf="displayCommentBool">
+            <div class="d-flex flex-column">
+              <textarea #comment type="text"
+                        class="fadeIn second  form-control" maxlength="100"></textarea>
+              <ngb-rating [(rate)]="currentRate"></ngb-rating>
+              <br>
+              <input (click)="insertComment(comment.value)" class="w-25" type="submit" value="Valider">
+            </div>
+            <br>
+            <br>
+          </div>
+          <div *ngIf="!noComment">
+            <span class="displayAll" (click)="displayAllComment()"
+                  *ngIf="!displayMoreComment"><i>Tout afficher...</i></span>
+            <span class="displayAll" (click)="displayAllComment()"
+                  *ngIf="displayMoreComment"><i>Cacher...</i></span>
+            <br>
+            <br>
+          </div>
+          <div>
+            <ul class="list-group ">
+              <li class="list-group-item d-flex flex-column" *ngFor="let comment of listAllComments; let index = index">
+                <div *ngIf="index <1 || displayMoreComment">
+                  <div class="d-flex flex-row justify-content-center">
+                    <img [src]='comment.photo' alt="poster" class="rounded-circle"
+                         width="50">
+                    <h6 (click)="moveToProfil(comment.login)" style="margin-left: 5%" class="login-comment">
+                      @{{comment.login}}</h6>
+                  </div>
+                  <br>
+                  <span>{{comment.content}}</span>
+                  <br>
+                  <p style="font-size: small"><i>{{comment.date | date: 'dd/MM/yyyy'}}</i></p>
+                  <ngb-rating [(rate)]="comment.note" [readonly]="true" [max]="5"></ngb-rating>
+                  <span></span>
+                </div>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-8">
+        <div class="card mb-3">
+          <div>
+            <br>
+            <div class="d-flex flex-row justify-content-around" style="margin-bottom: 3%">
+              <input type="submit" value="Informations" (click)="displayInformations()"/>
+              <input type="submit" value="Liste des compétences" (click)="displaySkillsList()"
+                     *ngIf="user['role'] == 'babysitter'"/>
+              <input type="submit" value="Agenda" (click)="displayAgenda()" *ngIf="user['role'] == 'babysitter'"/>
+            </div>
+            <div *ngIf="displaySkillsListBool">
+              <ul class="list-group d-flex" *ngIf="!modificationSkillsBool">
+                <li class="list-group-item" *ngFor="let skill of listAllSkills">
+                  <div class="d-flex flex-row justify-content-between">
+                    <span>{{skill.category}}</span>
+                    <span>{{skill.skill}} </span>
+                    <input value="Certifier" type="submit" *ngIf="!skill.certified && samePeople"
+                           (click)="displayCertified(skill.id)">
+                    <i class="fa fa-check-circle-o" aria-hidden="true" *ngIf="skill.certified"
+                       style="margin-left: 2%; color: #1e911e; font-size: 150%" ngbPopover="{{skill.detail}}"
+                       triggers="mouseenter:mouseleave" popoverTitle="Certification"></i>
+                  </div>
+                </li>
+              </ul>
+              <div *ngIf="addSkillBool" class="d-flex flex-row justify-content-evenly">
+                <input (change)="onChangeSkill($event,-1,-1)" type="text" class="float-lg-start" placeholder="Compétence">
+                <select (change)="onChangeCategorie($event,-1,-1)" class="fadeIn second float-end">
+                  <option value=""></option>
+                  <option *ngFor="let elem of listAllCategories">{{elem}}</option>
+                </select>
+              </div>
+              <div *ngIf="!modificationSkillsBool && !addSkillBool" class="text-center">
+                <br>
+                <div class="d-flex flex-row justify-content-center">
+                  <input type="submit" value="Ajouter" (click)="addSkill()" *ngIf='samePeople'>
+                  <input style="margin-left: 3% " type="submit" value="Modifier" (click)="modificationSkills()"
+                         *ngIf='samePeople'>
+                </div>
+              </div>
+              <ul class="list-group d-flex" *ngIf="modificationSkillsBool && !addSkillBool">
+                <li class="list-group-item" *ngFor="let skill of listAllSkills; let index = index">
+                  <input (change)="onChangeSkill($event,index,skill.id)" type="text" class="float-lg-start"
+                         value="{{skill.skill}}">
+                  <i class="fa fa-trash float-end" aria-hidden="true" (click)="deleteSkill(index,skill.id)"
+                     *ngIf='samePeople' style="margin-left: 2%"></i>
+                  <select (change)="onChangeCategorie($event,index,skill.id)" class="float-end">
+                    <option value=""></option>
+                    <option *ngFor="let elem of listAllCategories">{{elem}}</option>
+                  </select>
+                </li>
+                <br>
+              </ul>
+              <div *ngIf="modificationSkillsBool" class="justify-content-center d-flex flex-row">
+                <input type="submit" value="Enregistrer"
+                       (click)="updateSkills()">
+                <input type="submit" value="Annuler" style="margin-left: 2%"
+                       (click)="cancel()">
+              </div>
+              <div *ngIf="addSkillBool" class="text-center" style="margin-top: 5%">
+                <input type="submit" value="Enregistrer"
+                       (click)="insertSkills()">
+                <input type="submit" value="Annuler" style="margin-left: 2%"
+                       (click)="cancel()">
+              </div>
+              <br>
+            </div>
+            <div class="card-body" *ngIf="displayInformationsBool">
+              <div class="row">
+                <div class="col-sm-3" *ngIf="!modificationUserBool">
+                  <h6 class="mb-0">Nom Complet</h6>
+                </div>
+                <div class="col-sm-9 text-secondary" *ngIf="!modificationUserBool">
+                  {{user['name'].charAt(0).toUpperCase() + user['name'].substr(1)}} {{user['lastname'].toUpperCase()}}
+                </div>
+                <div class="col-sm-3" *ngIf="modificationUserBool">
+                  <h6 class="mb-0">Prenom</h6>
+                </div>
+                <div class="col-sm-9 text-secondary" *ngIf="modificationUserBool">
+                  <input [(ngModel)]="user['name']">
+                </div>
+              </div>
+              <hr *ngIf="modificationUserBool">
+              <div class="row">
+                <div class="col-sm-3" *ngIf="modificationUserBool">
+                  <h6 class="mb-0">Nom</h6>
+                </div>
+                <div class="col-sm-9 text-secondary" *ngIf="modificationUserBool">
+                  <input [(ngModel)]="user['lastname']">
+                </div>
+              </div>
+              <hr>
+              <div class="row">
+                <div class="col-sm-3">
+                  <h6 class="mb-0">Email</h6>
+                </div>
+                <div class="col-sm-9 text-secondary" *ngIf="!modificationUserBool">
+                  {{user['email']}}
+                </div>
+                <div class="col-sm-9 text-secondary" *ngIf="modificationUserBool">
+                  <input [(ngModel)]="user['email']">
+                </div>
+              </div>
+              <hr>
+              <div class="row">
+                <div class="col-sm-3">
+                  <h6 class="mb-0">Sexe</h6>
+                </div>
+                <div class="col-sm-9 text-secondary" *ngIf="!modificationUserBool">
+                  {{sexeUser}}
+                </div>
+                <div class="btn-group w-25 " role="group" ngbRadioGroup name="radioBasic" [ngModel]="sexe"
+                     *ngIf="modificationUserBool">
+                  <label ngbButtonLabel class="btn-primary">
+                    <input ngbButton type="radio" class="btn-check" value="1" #homme (click)="modifySexe(homme.value)">
+                    Homme
+                  </label>
+                  <label ngbButtonLabel class="btn-primary ">
+                    <input ngbButton type="radio" class="btn-check " value="2" #femme
+                           (click)="modifySexe(femme.value)"> Femme
+                  </label>
+                </div>
+              </div>
+              <hr>
+              <div class="row">
+                <div class="col-sm-3">
+                  <h6 class="mb-0">Age</h6>
+                </div>
+                <div class="col-sm-9 text-secondary" *ngIf="!modificationUserBool">
+                  {{user['age']}}
+                </div>
+                <div class="col-sm-9 text-secondary" *ngIf="modificationUserBool">
+                  <input [(ngModel)]="user['age']" type="number" placeholder="Age" min="0" max="100" oninput="this.value = this.value.replace(/[^0-9.]/g, '');
+       this.value = this.value.replace(/^(?!(?:\d{1,2}|100)$)[0-9]\d+$/,100);">
+                </div>
+              </div>
+              <hr>
+              <div class="row" *ngIf="modificationUserBool">
+                <div class="col-sm-3">
+                  <h6 class="mb-0">Description <span class="text-info">{{lengthTextAreaNumber}}
+                    /100</span></h6>
+                </div>
+                <div class="col-sm-9 text-secondary" *ngIf="!modificationUserBool">
+                  {{user['age']}}
+                </div>
+                <div class="col-sm-9 text-secondary" *ngIf="modificationUserBool">
+                <textarea [(ngModel)]="user['description']" #box type="text" id="form7"
+                          class="fadeIn second  form-control" maxlength="100"
+                          (keyup)="onKeyUpTextArea(box)"></textarea>
+                </div>
+              </div>
+              <hr *ngIf="modificationUserBool">
+              <div class="row">
+                <div *ngIf="!modificationUserBool" class="text-center">
+                  <input type="submit" value="Modifier" (click)="modificationUser()" *ngIf='samePeople'>
+                </div>
+                <div *ngIf="modificationUserBool" class="d-flex flex-row justify-content-center">
+                  <input type="submit" value="Enregistrer"
+                         (click)="updateUser()">
+                  <input type="submit" value="Annuler" style="margin-left: 2%"
+                         (click)="cancel()">
+                </div>
+              </div>
+            </div>
+            <div *ngIf="displayAgendaBool && !addAvaibalityBool && !modificationAvaibalityBool" style="height: 10vh">
+              <app-calendar [item]=false></app-calendar>
+              <div class="d-flex flex-row justify-content-center">
+                <input style="margin-left: 3% " type="submit" value="Modifier" (click)="modificationAvailability()"
+                       *ngIf='samePeople'>
+              </div>
+            </div>
+          </div>
+          <br>
+        </div>
+        <div class="text-center card" *ngIf="!displayAgendaBool && !noPost">
+          <br>
+          <h4>Mes postes</h4>
+          <br>
+          <ngb-carousel *ngIf="listPosts" class="carousel carousel-dark slide" style="z-index: 0">
+            <ng-template ngbSlide *ngFor="let post of listPosts">
+              <div>
+                <textarea readonly style="width: 80%">{{post.description}}</textarea>
+                <br><br>
+                <div class="d-flex flex-row justify-content-evenly">
+                  <div class="d-flex flex-column">
+                    <h6> Tarif horraire : </h6> <span>{{post.hourlyWage}} €</span>
+                  </div>
+                  <div *ngIf="post.type === 'babysitter' && post.activityZone">
+                    <h6>Zone d'activitée :</h6>
+                    <span *ngFor="let activityzone of post.activityZone"> {{activityzone}}</span>
+                  </div>
+                  <div *ngIf="post.type === 'parent' && post.avaibality && post.avaibality.length > 0">
+                    <h6>Disponibilité :</h6>
+                    <span *ngFor="let avaibality of post.avaibality"> {{avaibality}}</span>
+                  </div>
+                  <div *ngIf="post.type === 'parent' && post.skils && post.skils.length > 0">
+                    <h6>Compétence :</h6>
+                    <span *ngFor="let skills of post.skils"> {{skills}}</span>
+                  </div>
+                  <div *ngIf="post.type === 'parent' && post.numberChild">
+                    <div class="d-flex flex-column">
+                      <h6> Nombre d'enfants : </h6> <span>{{post.numberChild}} </span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <br><br>
+              <div class="d-flex flex-row justify-content-center float-start m-3 "
+                   *ngIf='samePeople'>
+                <input type="submit" value="Modifier" style="margin-left: 240%" (click)="updatePosts(post.id,post.hourlyWage,post.description)">
+              </div>
+            </ng-template>
+          </ngb-carousel>
+        </div>
+        <div *ngIf="displayAgendaBool && !addAvaibalityBool && modificationAvaibalityBool" class="text-center card" >
+          <app-calendar [item]=true (newItemEvent)="addItem($event)"></app-calendar>
+          <div class="d-flex flex-row justify-content-center">
+            <input type="submit" value="Enregistrer" (click)="updateAvailability()" *ngIf='samePeople'>
+            <input style="margin-left: 3% " type="submit" value="Annuler" (click)="cancel()" *ngIf='samePeople'>
+          </div>
+        </div>
+        <br>
+      </div>
+    </div>
+  </div>
+</div>

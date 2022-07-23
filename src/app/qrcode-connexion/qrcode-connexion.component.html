@@ -1,0 +1,50 @@
+<div class="wrapper fadeInDown">
+  <div id="formContent">
+    <p *ngIf="returnError">
+      <ngb-alert [dismissible]="true" (closed)="closeAlert()">
+        <strong>Attention !</strong> {{errorMessage}}.
+      </ngb-alert>
+    </p>
+    <div *ngIf="!updateHoursBool && !contractBool">
+      <div class="fadeIn first">
+        <br>
+        <h3>Connexion Qr Code</h3>
+        <br>
+      </div>
+      <div>
+        <input type="text" #login class="fadeIn second" placeholder="Pseudo">
+        <input type="password" #password class="fadeIn third" placeholder="Mot de passe">
+        <br><br>
+        <input type="submit" class="fadeIn fourth" value="Valider" (click)="checkConnected(login.value,password.value)"
+               [disabled]="clickConnect">
+      </div>
+    </div>
+    <div *ngIf="updateHoursBool && !contractBool">
+      <div class="fadeIn first">
+        <br>
+        <h3>Ajouter les heures de la garde</h3>
+        <br>
+      </div>
+      <div>
+        <input type="number" #hoursToDone class="fadeIn second" placeholder="Heure" min="0" max="24">
+        <br><br>
+        <input type="submit" class="fadeIn fourth" value="Valider"
+               (click)="updateHours(hoursToDone.value)"
+               [disabled]="clickConnect">
+      </div>
+    </div>
+
+    <div *ngIf="contractBool">
+      <div class="fadeIn first">
+        <br>
+        <h3>Mise à jour du contrat réussi <i style="color: #1e911e" class="fa fa-check-circle-o" aria-hidden="true"></i>
+        </h3>
+        <br>
+        <h6>Nombre d'heures effectué : {{contract["numberOfHourDone"]}}</h6>
+        <br>
+        <p class="fadeIn fourth signalement"><i class="fa fa-exclamation" aria-hidden="true"></i><i> Signaler un
+          problème</i></p>
+      </div>
+    </div>
+  </div>
+</div>

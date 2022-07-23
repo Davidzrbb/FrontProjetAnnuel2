@@ -1,0 +1,53 @@
+<div class="wrapper fadeInDown">
+  <div id="formContent">
+    <p *ngIf="returnError">
+      <ngb-alert [dismissible]="true" (closed)="closeAlert()">
+        <strong>Attention !</strong> {{errorMessage}}.
+      </ngb-alert>
+    </p>
+    <br>
+    <div class="fadeIn first" *ngIf="user.login">
+      <h3>Bienvenue {{user.login}}</h3>
+    </div>
+    <div class="fadeIn second">
+      <br>
+      <img height="130px" width="130px" [src]='pictureProfile' style="margin-right: 2%;border-radius: 100%">
+      <i class="fa fa-camera upload-button" (click)="uploadButton()"></i>
+      <input class="file-upload" type="file" accept="image/*" (change)="readUrl($event)"/>
+      <br><br>
+    </div>
+    <div>
+      <label for="form7" class="fadeIn second"><i>Parlez-nous de vous ! <span class="text-info">{{lengthTextAreaNumber}}
+        /100</span></i></label>
+      <textarea #box type="text" id="form7" class="fadeIn second  form-control" maxlength="100"
+                (keyup)="onKeyUpTextArea(box)"></textarea>
+      <br><br>
+      <label class="fadeIn second" for="pet-select"><i>Choisissez vos catégories préférées</i></label>
+      <select (change)="onChange($event)" class="fadeIn second" name="pets" id="pet-select">
+        <option value=""></option>
+        <option *ngFor="let elem of listAllCategories">{{elem}}</option>
+      </select>
+      <br><br>
+      <div *ngIf="categorySelected !=''">
+        <label><i>Quels sont vos compétence en {{categorySelected}}  <span class="text-info">{{lengthSkill}}
+          /20</span></i></label>
+        <input type="text" maxlength="20" #skills (keyup)="onKeyUpSkill(skills)" placeholder="Compétences"/>
+        <i style="color: #5fbae9" class="fa fa-check" aria-hidden="true" (click)="addCompetence(skills.value)"></i>
+      </div>
+      <br>
+      <div class="d-flex flex-row flex-wrap" *ngIf="addCompetencesBool">
+        <p *ngFor="let elem of listUserCompetences; let i = index" class="infoCategories">
+          {{elem["skill"]}}
+          <i class="fa fa-times text-danger" aria-hidden="true" (click)="removeElem(elem['skill'])"></i>
+          <br>
+          <span *ngIf="i == listUserCompetences.length -1">{{i + 1}}/5</span>
+        </p>
+        <br><br>
+      </div>
+      <input type="submit" class="fadeIn second" value="Valider" (click)="validateInformation(box.value)">
+      <div id="formFooter">
+        <a class="underlineHover" [routerLink]="['/profile']" [queryParams]="{login:user.login}" routerLinkActive="active">Fermer</a>
+      </div>
+    </div>
+  </div>
+</div>
